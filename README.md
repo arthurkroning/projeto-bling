@@ -74,7 +74,9 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 * **Sanitização de Retorno (Data Sanitization):** Método centralizado na camada de serviço (`formatUser`) que desestrutura o objeto de usuário e descarta explicitamente o atributo de senha antes de serializar o JSON de resposta.
 
 ### 5. Ferramentas de Desenvolvimento & Engenharia
-* **Google Antigravity:** A concepção, estruturação arquitetural em camadas, validação técnica dos fluxos e elaboração da suíte de testes foram aceleradas com o auxílio do **Google Antigravity** (ambiente agentic de desenvolvimento assistido por IA do Google DeepMind), assegurando rigor metodológico, cobertura integral dos requisitos do edital e código limpo.
+* **Google Antigravity (Gemini 3.8 Flash):** Utilizado como apoio à concepção e à estruturação arquitetural em camadas, à validação dos fluxos e à elaboração da suíte de testes.
+* **OpenCode (DeepSeek V4.1 Flash Free):** Utilizado para executar testes automatizados, revisar o código e identificar oportunidades de refinamento.
+* **Codex (GPT-5):** Utilizado para revisão complementar, implementação de ajustes e verificação da consistência entre código, testes e documentação.
 * **Git:** Controle de versionamento distribuído com histórico semântico de commits e arquivos de configuração limpos.
 
 ---
