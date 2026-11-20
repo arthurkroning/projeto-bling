@@ -1,0 +1,21 @@
+{
+  "name": "gestao-usuarios-fullstack",
+  "version": "1.0.0",
+  "description": "Desafio Técnico Full-Stack - Sistema de Gestão de Usuários",
+  "scripts": {
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "test:api": "cd backend && node test_api.js"
+  },
+  "keywords": [
+    "devpool",
+    "crud",
+    "fullstack",
+    "nodejs",
+    "sqlite",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC"
+}
