@@ -20,6 +20,7 @@
 4. [Documentação dos Endpoints da API REST (Exemplos cURL)](#-documentação-dos-endpoints-da-api-rest-exemplos-curl)
 5. [Arquitetura de Software e Estrutura de Pastas](#-arquitetura-de-software-e-estrutura-de-pastas)
 6. [Ciclo de Vida da Requisição e Diretrizes de Segurança](#-ciclo-de-vida-da-requisição-e-diretrizes-de-segurança)
+7. [Diagrama de Arquitetura Visual](#-diagrama-de-arquitetura-visual)
 
 ---
 
@@ -341,3 +342,29 @@ O fluxo de dados da aplicação obedece a um pipeline unidirecional, desacoplado
 - **Proteção contra SQL Injection:** Todos os comandos no `user.repository.js` utilizam placeholders (`?`) garantindo consultas parametrizadas.
 - **Proteção contra XSS:** Sanitização em tempo de renderização no frontend de qualquer conteúdo injetado no DOM.
 - **Isolamento de Credenciais:** Consultas de listagem, detalhe e unicidade não recuperam a coluna de senha. Apenas a consulta interna de atualização busca o hash existente para preservá-lo quando a senha é omitida; a camada de serviço o remove antes de qualquer retorno ao cliente.
+
+---
+
+## 🗺️ Diagrama de Arquitetura Visual
+
+O arquivo editável [arquitetura-visual-gestao-usuarios.drawio](./arquitetura-visual-gestao-usuarios.drawio) apresenta visualmente o caminho completo de uma requisição. Ele pode ser aberto e alterado no [Draw.io](https://app.diagrams.net/) por **Arquivo → Abrir do dispositivo**.
+
+O diagrama usa o cadastro de usuário (`POST /users`) como exemplo, pois reúne validação, segurança e persistência. As outras operações CRUD (`GET`, `PUT`, `PATCH` e `DELETE`) percorrem a mesma sequência de camadas.
+
+### Como ler o diagrama
+
+1. **Cliente / Frontend:** o usuário preenche o formulário; o JavaScript valida os campos essenciais e envia um JSON com `fetch`.
+2. **Middleware Express:** `cors()` trata a política de origem e `express.json()` converte o JSON em objeto. JSON inválido recebe erro `400`.
+3. **Rotas e Controller:** `user.routes.js` associa `POST /users` ao controller; este chama o serviço e define a resposta HTTP apropriada.
+4. **Serviço:** aplica as regras de negócio, valida nome, e-mail, login e senha, verifica duplicidades, gera o hash BCrypt da senha e remove a senha de qualquer resposta enviada ao cliente.
+5. **Repositório e SQLite:** o repositório executa SQL parametrizado com placeholders (`?`) e o SQLite grava os dados na tabela `users`, que possui chave primária e restrições de unicidade para e-mail e login.
+6. **Retorno à interface:** no sucesso, a API devolve `201 Created` com JSON seguro; o frontend fecha o modal, atualiza a tabela e mostra um toast. Erros de validação, recurso inexistente e falhas inesperadas retornam `400`, `404` e `500`, respectivamente.
+
+### Controles de segurança destacados
+
+- **XSS:** o frontend escapa os dados antes de renderizá-los em HTML e utiliza `textContent` onde aplicável.
+- **SQL Injection:** as consultas não concatenam valores fornecidos pelo usuário; usam parâmetros separados do texto SQL.
+- **Credenciais:** somente o hash BCrypt é persistido; a senha em texto puro e o hash nunca aparecem nas respostas da API.
+- **Integridade:** as validações existem no serviço e as restrições `NOT NULL` e `UNIQUE` também reforçam os dados no banco.
+
+> **Nota de produção:** o CORS está habilitado para qualquer origem na implementação atual. Em ambiente produtivo, deve-se restringir a política ao domínio conhecido do frontend, além de incluir HTTPS, autenticação/autorização, rate limiting e gestão segura de segredos.
