@@ -32,7 +32,7 @@ class UserController {
       const createdUser = await userService.createUser(req.body);
       return res.status(201).json(createdUser);
     } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
+      return res.status(error.statusCode || 500).json({ error: error.message });
     }
   }
 
@@ -43,7 +43,7 @@ class UserController {
       const updatedUser = await userService.updateUser(id, req.body);
       return res.status(200).json(updatedUser);
     } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
+      return res.status(error.statusCode || 500).json({ error: error.message });
     }
   }
 

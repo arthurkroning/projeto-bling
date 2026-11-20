@@ -27,4 +27,15 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint não encontrado.' });
 });
 
+// 7. Middleware global de tratamento de erros
+// Captura SyntaxError do express.json() (JSON malformado) e quaisquer erros não tratados
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'O corpo da requisição contém JSON inválido.' });
+  }
+  console.error('Erro inesperado:', err);
+  return res.status(err.statusCode || 500).json({ error: err.message || 'Erro interno do servidor.' });
+});
+
 module.exports = app;

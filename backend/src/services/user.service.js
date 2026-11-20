@@ -87,8 +87,13 @@ class UserService {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 7. Status do Usuário (padrão true se omitido)
-    const userActive = active !== undefined ? Boolean(active) : true;
+    // 7. Status do Usuário (padrão true se omitido; aceita apenas booleano)
+    if (active !== undefined && typeof active !== 'boolean') {
+      const error = new Error('O campo "active" deve ser um valor booleano (true ou false).');
+      error.statusCode = 400;
+      throw error;
+    }
+    const userActive = active !== undefined ? active : true;
 
     // 8. Inserção no banco
     const createdId = await userRepository.create({
@@ -160,8 +165,13 @@ class UserService {
       finalPassword = await bcrypt.hash(password, 10);
     }
 
-    // 5. Status
-    const userActive = active !== undefined ? Boolean(active) : Boolean(existingUser.active);
+    // 5. Status (aceita apenas booleano; se omitido, mantém o valor atual)
+    if (active !== undefined && typeof active !== 'boolean') {
+      const error = new Error('O campo "active" deve ser um valor booleano (true ou false).');
+      error.statusCode = 400;
+      throw error;
+    }
+    const userActive = active !== undefined ? active : Boolean(existingUser.active);
 
     // 6. Atualização no banco
     await userRepository.update(id, {

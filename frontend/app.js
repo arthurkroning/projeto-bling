@@ -189,29 +189,29 @@ async function handleFormSubmit(e) {
   const password = elements.passwordInput.value;
   const active = elements.activeInput.checked;
 
-  // Validações básicas no Frontend antes do envio
+  // Validações básicas no Frontend antes do envio (coleta múltiplos erros)
+  const errors = [];
   if (name.length < 3) {
-    showFormError('O nome deve conter pelo menos 3 caracteres.');
-    return;
+    errors.push('O nome deve conter pelo menos 3 caracteres.');
   }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFormError('Informe um e-mail válido.');
-    return;
+    errors.push('Informe um e-mail válido.');
   }
   if (login.length < 3) {
-    showFormError('O login deve conter pelo menos 3 caracteres.');
-    return;
+    errors.push('O login deve conter pelo menos 3 caracteres.');
   }
-
-  // Se estiver criando, a senha é estritamente obrigatória (min 8 chars)
+  // Se estiver criando, a senha é obrigatória
   if (!editingUserId && (!password || password.length < 8)) {
-    showFormError('A senha é obrigatória e deve ter pelo menos 8 caracteres.');
-    return;
+    errors.push('A senha é obrigatória e deve ter pelo menos 8 caracteres.');
   }
-
   // Se estiver editando e digitou senha, deve ter min 8 chars
   if (editingUserId && password && password.length < 8) {
-    showFormError('A nova senha deve ter no mínimo 8 caracteres.');
+    errors.push('A nova senha deve ter no mínimo 8 caracteres.');
+  }
+  if (errors.length) {
+    const msg = errors.join('\n');
+    showFormError(msg);
+    showToast(msg, 'error');
     return;
   }
 
@@ -480,7 +480,7 @@ function setDeleteLoading(isLoading) {
 }
 
 function showFormError(message) {
-  elements.formErrorText.textContent = message;
+  elements.formErrorText.innerHTML = message.replace(/\n/g, '<br>');
   elements.formErrorAlert.classList.remove('hidden');
 }
 
