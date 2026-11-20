@@ -114,6 +114,21 @@ function setupEventListeners() {
   // Mostrar / Ocultar Senha
   elements.btnTogglePassword.addEventListener('click', togglePasswordVisibility);
 
+  // Delegação de eventos para ações da tabela (Editar / Excluir) de forma segura contra XSS
+  elements.tableBody.addEventListener('click', (e) => {
+    const btn = e.target.closest('button.btn-action');
+    if (!btn) return;
+
+    const id = Number(btn.dataset.id);
+    if (!id) return;
+
+    if (btn.dataset.action === 'edit' || btn.classList.contains('edit')) {
+      openEditModal(id);
+    } else if (btn.dataset.action === 'delete' || btn.classList.contains('delete')) {
+      openDeleteModal(id);
+    }
+  });
+
   // Fechar modais ao clicar no fundo escuro
   window.addEventListener('click', (e) => {
     if (e.target === elements.userModal) closeUserModal();
@@ -298,11 +313,11 @@ function renderUsers(usersList) {
       </td>
       <td>
         <div class="actions-cell">
-          <button class="btn-action edit" onclick="openEditModal(${user.id})" title="Editar usuário">
+          <button class="btn-action edit" data-action="edit" data-id="${user.id}" title="Editar usuário">
             <i class="ph ph-pencil-simple"></i>
             <span>Editar</span>
           </button>
-          <button class="btn-action delete" onclick="openDeleteModal(${user.id}, '${escapeQuotes(user.name)}')" title="Excluir usuário">
+          <button class="btn-action delete" data-action="delete" data-id="${user.id}" title="Excluir usuário">
             <i class="ph ph-trash"></i>
             <span>Excluir</span>
           </button>
@@ -415,10 +430,12 @@ function closeUserModal() {
 
 /**
  * Abre o modal de confirmação de exclusão
+ * O nome é obtido a partir de usersState pelo ID, evitando interpolação insegura no HTML
  */
 function openDeleteModal(id, name) {
-  deletingUserId = id;
-  elements.deleteUserName.textContent = name;
+  deletingUserId = Number(id);
+  const user = usersState.find(u => u.id === deletingUserId);
+  elements.deleteUserName.textContent = (user && user.name) || name || '';
   elements.deleteModal.classList.remove('hidden');
 }
 
@@ -519,9 +536,12 @@ function escapeHtml(text) {
 
 function escapeQuotes(text) {
   if (!text) return '';
-  return String(text).replace(/'/g, "\\'");
+  return String(text)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;');
 }
 
-// Exporta para escopo global para acionamento via onclick inline nos botões da tabela
+// Exporta para escopo global para compatibilidade e testes
 window.openEditModal = openEditModal;
 window.openDeleteModal = openDeleteModal;

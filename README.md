@@ -52,11 +52,11 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
   * **Sem dependências de compilação:** Dispensou o overhead de builders pesados (Webpack/Vite) ou abstrações de frameworks, proporcionando carregamento instantâneo no navegador.
   * **Manipulação Nativa do DOM:** Controle granular do ciclo de vida dos eventos (`addEventListener`, delegação de eventos e manipulação dinâmica de nós).
   * **Comunicação Assíncrona com Fetch API:** Requisições assíncronas nativas utilizando `async/await`, com controle explícito de cabeçalhos HTTP (`Content-Type: application/json`).
-  * **Sanitização Anti-XSS:** Implementação de rotinas de escape de caracteres HTML (`escapeHtml` e `escapeQuotes`) para prevenir vulnerabilidades de *Cross-Site Scripting*.
+  * **Sanitização Anti-XSS e Delegação Segura:** Implementação de rotinas de escape de caracteres HTML (`escapeHtml`), uso estrito de `textContent` no DOM e delegação de eventos via `data-action`/`data-id` no `tableBody`, eliminando `onclick` inline e prevenindo qualquer vetor de injeção ou *Cross-Site Scripting* (XSS).
 * **Phosphor Icons (via CDN):** Conjunto leve e consistente de ícones vetoriais em SVG para enriquecimento visual da interface.
 
 ### 2. Backend (Servidor e API REST)
-* **Node.js (LTS v18+):** Ambiente de execução JavaScript assíncrono baseado no motor V8, orientado a eventos e I/O não bloqueante, ideal para APIs REST de alta concorrência.
+* **Node.js (>= 20.17.0 / LTS v20 ou v22):** Ambiente de execução JavaScript assíncrono baseado no motor V8, orientado a eventos e I/O não bloqueante, em conformidade com as exigências dos drivers nativos modernos do `sqlite3@6.0.1`.
 * **Express (v4.21):** Framework web minimalista e consagrado na indústria, utilizado para roteamento semântico, encadeamento de middlewares e tratamento padronizado de requisições e respostas HTTP.
 * **CORS (Cross-Origin Resource Sharing):** Middleware configurado para gerenciar políticas de cabeçalhos HTTP, permitindo que a aplicação frontend e consumidores autorizados consumam a API com segurança.
 * **Parser de JSON Nativo (`express.json()`):** Middleware para deserialização automática de corpos de requisição formatados em JSON com controle de tamanho de payload.
@@ -82,7 +82,7 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 ## 💻 Instalação e Execução Local
 
 ### Pré-requisitos
-* **Node.js** instalado na máquina (versão 18.0 ou superior recomendada).
+* **Node.js** instalado na máquina (versão **20.17.0 ou superior** recomendada — LTS v20.17+ ou v22+).
 * Gerenciador de pacotes **npm** (incluso na instalação padrão do Node.js).
 * Navegador web moderno (Chrome, Edge, Firefox, Brave ou Safari).
 
