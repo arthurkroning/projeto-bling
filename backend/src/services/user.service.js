@@ -108,8 +108,8 @@ class UserService {
     return await this.getUserById(createdId);
   }
 
-  // Atualização de usuário
-  async updateUser(id, data) {
+  // Atualização de usuário. PUT exige os campos cadastrais; PATCH preserva os omitidos.
+  async updateUser(id, data, { partial = false } = {}) {
     const existingUser = await userRepository.findByIdWithPassword(id);
     if (!existingUser) {
       const error = new Error(`Usuário com ID ${id} não foi encontrado.`);
@@ -118,21 +118,24 @@ class UserService {
     }
 
     const { name, email, login, password, active } = data || {};
+    const finalName = partial && name === undefined ? existingUser.name : name;
+    const finalEmail = partial && email === undefined ? existingUser.email : email;
+    const finalLogin = partial && login === undefined ? existingUser.login : login;
 
     // 1. Validação de Nome
-    if (!name || typeof name !== 'string' || name.trim().length < 3) {
+    if (!finalName || typeof finalName !== 'string' || finalName.trim().length < 3) {
       const error = new Error('O campo "name" é obrigatório e deve conter no mínimo 3 caracteres válidos.');
       error.statusCode = 400;
       throw error;
     }
 
     // 2. Validação de E-mail
-    if (!email || typeof email !== 'string' || !UserService.EMAIL_REGEX.test(email.trim())) {
+    if (!finalEmail || typeof finalEmail !== 'string' || !UserService.EMAIL_REGEX.test(finalEmail.trim())) {
       const error = new Error('O campo "email" é obrigatório e deve possuir um formato válido.');
       error.statusCode = 400;
       throw error;
     }
-    const emailNormalized = email.trim().toLowerCase();
+    const emailNormalized = finalEmail.trim().toLowerCase();
     const userWithSameEmail = await userRepository.findByEmail(emailNormalized);
     if (userWithSameEmail && Number(userWithSameEmail.id) !== Number(id)) {
       const error = new Error('O e-mail informado já está em uso por outro usuário.');
@@ -141,12 +144,12 @@ class UserService {
     }
 
     // 3. Validação de Login
-    if (!login || typeof login !== 'string' || login.trim().length < 3) {
+    if (!finalLogin || typeof finalLogin !== 'string' || finalLogin.trim().length < 3) {
       const error = new Error('O campo "login" é obrigatório e deve conter no mínimo 3 caracteres.');
       error.statusCode = 400;
       throw error;
     }
-    const loginNormalized = login.trim().toLowerCase();
+    const loginNormalized = finalLogin.trim().toLowerCase();
     const userWithSameLogin = await userRepository.findByLogin(loginNormalized);
     if (userWithSameLogin && Number(userWithSameLogin.id) !== Number(id)) {
       const error = new Error('O login informado já está em uso por outro usuário.');
@@ -175,7 +178,7 @@ class UserService {
 
     // 6. Atualização no banco
     await userRepository.update(id, {
-      name: name.trim(),
+      name: finalName.trim(),
       email: emailNormalized,
       login: loginNormalized,
       password: finalPassword,

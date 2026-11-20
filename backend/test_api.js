@@ -205,7 +205,7 @@ async function runTests() {
     });
 
     // ─── ATUALIZAÇÃO ───────────────────────────────────────
-    console.log('\n▸ Atualização (PUT /users/:id)\n');
+    console.log('\n▸ Atualização (PUT e PATCH /users/:id)\n');
 
     await test('14. Atualiza usuário com sucesso (200)', async () => {
       const res = await makeRequest('PUT', `/users/${userId}`, {
@@ -230,7 +230,22 @@ async function runTests() {
       assert.strictEqual(res.body.name, 'Carlos Sem Senha');
     });
 
-    await test('16. Retorna 404 ao atualizar ID inexistente', async () => {
+    await test('16. PATCH atualiza somente os campos enviados (200)', async () => {
+      const res = await makeRequest('PATCH', `/users/${userId}`, { active: false });
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.name, 'Carlos Sem Senha');
+      assert.strictEqual(res.body.email, testEmail);
+      assert.strictEqual(res.body.login, testLogin);
+      assert.strictEqual(res.body.active, false);
+    });
+
+    await test('17. PUT exige os campos cadastrais completos (400)', async () => {
+      const res = await makeRequest('PUT', `/users/${userId}`, { active: true });
+      assert.strictEqual(res.status, 400);
+      assert.ok(res.body.error);
+    });
+
+    await test('18. Retorna 404 ao atualizar ID inexistente', async () => {
       const res = await makeRequest('PUT', '/users/999999', {
         name: 'Inexistente',
         email: 'inexistente@teste.com',
@@ -242,17 +257,17 @@ async function runTests() {
     // ─── EXCLUSÃO ──────────────────────────────────────────
     console.log('\n▸ Exclusão (DELETE /users/:id)\n');
 
-    await test('17. Exclui usuário com sucesso (200)', async () => {
+    await test('19. Exclui usuário com sucesso (200)', async () => {
       const res = await makeRequest('DELETE', `/users/${userId}`);
       assert.strictEqual(res.status, 200);
     });
 
-    await test('18. Buscar usuário excluído retorna 404', async () => {
+    await test('20. Buscar usuário excluído retorna 404', async () => {
       const res = await makeRequest('GET', `/users/${userId}`);
       assert.strictEqual(res.status, 404);
     });
 
-    await test('19. Excluir usuário inexistente retorna 404', async () => {
+    await test('21. Excluir usuário inexistente retorna 404', async () => {
       const res = await makeRequest('DELETE', `/users/${userId}`);
       assert.strictEqual(res.status, 404);
     });
@@ -260,14 +275,14 @@ async function runTests() {
     // ─── JSON MALFORMADO ───────────────────────────────────
     console.log('\n▸ Tratamento de Erros Gerais\n');
 
-    await test('20. JSON malformado retorna 400 com JSON explicativo', async () => {
+    await test('22. JSON malformado retorna 400 com JSON explicativo', async () => {
       const res = await makeRequest('POST', '/users', '{invalido}');
       assert.strictEqual(res.status, 400);
       assert.ok(typeof res.body === 'object', 'Resposta deve ser JSON');
       assert.ok(res.body.error, 'Deve conter campo error');
     });
 
-    await test('21. Rota inexistente retorna 404 com JSON', async () => {
+    await test('23. Rota inexistente retorna 404 com JSON', async () => {
       const res = await makeRequest('GET', '/rota-inexistente');
       assert.strictEqual(res.status, 404);
       assert.ok(typeof res.body === 'object');
@@ -277,7 +292,7 @@ async function runTests() {
     // ─── CORS ──────────────────────────────────────────────
     console.log('\n▸ CORS\n');
 
-    await test('22. Resposta inclui header Access-Control-Allow-Origin', async () => {
+    await test('24. Resposta inclui header Access-Control-Allow-Origin', async () => {
       const res = await makeRequest('GET', '/users');
       const acaoHeader = res.headers['access-control-allow-origin'];
       assert.ok(acaoHeader, 'Header Access-Control-Allow-Origin deve estar presente');

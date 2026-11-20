@@ -22,17 +22,20 @@ class UserRepository {
 
   // Busca usuário por ID trazendo também a senha (uso interno para updates parciais de senha)
   async findByIdWithPassword(id) {
-    return await query.get('SELECT * FROM users WHERE id = ?', [id]);
+    return await query.get(
+      'SELECT id, name, email, login, password, active, created_at, updated_at FROM users WHERE id = ?',
+      [id]
+    );
   }
 
   // Busca por e-mail (para validar unicidade)
   async findByEmail(email) {
-    return await query.get('SELECT * FROM users WHERE email = ?', [email]);
+    return await query.get('SELECT id FROM users WHERE email = ?', [email]);
   }
 
   // Busca por login (para validar unicidade)
   async findByLogin(login) {
-    return await query.get('SELECT * FROM users WHERE login = ?', [login]);
+    return await query.get('SELECT id FROM users WHERE login = ?', [login]);
   }
 
   // Insere um novo usuário e retorna o ID gerado

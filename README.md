@@ -113,7 +113,7 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 
 ### Execução dos Testes Automatizados
 
-O projeto acompanha uma suíte de **22 testes de integração** ponta a ponta (`test_api.js`) que utiliza `assert` do Node.js para validar automaticamente as regras de negócio da API — validação de campos (nome, e-mail, login, senha), unicidade de e-mail e login, `active` padrão e booleano estrito, ocultação de senha no retorno, códigos de status HTTP (200, 201, 400, 404), tratamento de JSON malformado, CORS e rotas inexistentes. O processo termina com **exit code 1** caso algum teste falhe:
+O projeto acompanha uma suíte de **24 testes de integração** ponta a ponta (`test_api.js`) que utiliza `assert` do Node.js para validar automaticamente as regras de negócio da API — validação de campos (nome, e-mail, login, senha), unicidade de e-mail e login, `active` padrão e booleano estrito, ocultação de senha no retorno, atualização completa por `PUT`, atualização parcial por `PATCH`, códigos de status HTTP (200, 201, 400, 404), tratamento de JSON malformado, CORS e rotas inexistentes. O processo termina com **exit code 1** caso algum teste falhe:
 
 ```bash
 npm run test:api
@@ -208,7 +208,7 @@ Retorna os dados de um usuário específico identificado pelo parâmetro de rota
 ---
 
 ### 4. Atualizar Dados do Usuário (`PUT /users/{id}` ou `PATCH /users/{id}`)
-Atualiza dados cadastrais. Se o campo `password` for enviado (mínimo de 8 caracteres), gera um novo hash; se omitido ou em branco, preserva o hash anterior.
+`PUT` atualiza o cadastro completo e exige `name`, `email` e `login`. `PATCH` atualiza somente os campos enviados, preservando os demais. Em ambos, se o campo `password` for enviado (mínimo de 8 caracteres), gera um novo hash; se omitido ou em branco, preserva o hash anterior.
 
 * **Status de Sucesso:** `200 OK`
 * **Status se não encontrado:** `404 Not Found`
@@ -222,6 +222,12 @@ Atualiza dados cadastrais. Se o campo `password` for enviado (mínimo de 8 carac
       "login": "mariasantos",
       "active": true
     }'
+  ```
+* **Exemplo de atualização parcial:**
+  ```bash
+  curl -X PATCH http://localhost:3000/users/1 \
+    -H "Content-Type: application/json" \
+    -d '{ "active": false }'
   ```
 
 ---
@@ -332,4 +338,4 @@ O fluxo de dados da aplicação obedece a um pipeline unidirecional, desacoplado
 ### Síntese de Segurança:
 - **Proteção contra SQL Injection:** Todos os comandos no `user.repository.js` utilizam placeholders (`?`) garantindo consultas parametrizadas.
 - **Proteção contra XSS:** Sanitização em tempo de renderização no frontend de qualquer conteúdo injetado no DOM.
-- **Isolamento de Credenciais:** Queries SQL de consulta não recuperam a coluna de senha e a camada de serviço garante a remoção de campos sensíveis antes de qualquer retorno ao cliente.
+- **Isolamento de Credenciais:** Consultas de listagem, detalhe e unicidade não recuperam a coluna de senha. Apenas a consulta interna de atualização busca o hash existente para preservá-lo quando a senha é omitida; a camada de serviço o remove antes de qualquer retorno ao cliente.

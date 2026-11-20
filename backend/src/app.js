@@ -35,7 +35,9 @@ app.use((err, req, res, _next) => {
     return res.status(400).json({ error: 'O corpo da requisição contém JSON inválido.' });
   }
   console.error('Erro inesperado:', err);
-  return res.status(err.statusCode || 500).json({ error: err.message || 'Erro interno do servidor.' });
+  const statusCode = err.statusCode || 500;
+  const message = statusCode >= 500 ? 'Erro interno do servidor.' : err.message;
+  return res.status(statusCode).json({ error: message });
 });
 
 module.exports = app;

@@ -480,7 +480,7 @@ function setDeleteLoading(isLoading) {
 }
 
 function showFormError(message) {
-  elements.formErrorText.innerHTML = message.replace(/\n/g, '<br>');
+  elements.formErrorText.textContent = message;
   elements.formErrorAlert.classList.remove('hidden');
 }
 

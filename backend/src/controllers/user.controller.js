@@ -1,5 +1,16 @@
 const userService = require('../services/user.service');
 
+function sendError(res, error) {
+  const statusCode = error.statusCode || 500;
+
+  if (statusCode >= 500) {
+    console.error('Erro inesperado:', error);
+    return res.status(statusCode).json({ error: 'Erro interno do servidor.' });
+  }
+
+  return res.status(statusCode).json({ error: error.message });
+}
+
 /**
  * Camada de Controller (Controller Pattern)
  * Responsável por receber a requisição HTTP, acionar o serviço e devolver a resposta.
@@ -11,7 +22,7 @@ class UserController {
       const users = await userService.getAllUsers();
       return res.status(200).json(users);
     } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
+      return sendError(res, error);
     }
   }
 
@@ -22,7 +33,7 @@ class UserController {
       const user = await userService.getUserById(id);
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
+      return sendError(res, error);
     }
   }
 
@@ -32,18 +43,18 @@ class UserController {
       const createdUser = await userService.createUser(req.body);
       return res.status(201).json(createdUser);
     } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
+      return sendError(res, error);
     }
   }
 
-  // PUT ou PATCH /users/:id - Atualiza os dados de um usuário
-  async update(req, res) {
+  // PUT /users/:id substitui os dados; PATCH /users/:id altera somente campos enviados
+  async update(req, res, isPartial = false) {
     try {
       const { id } = req.params;
-      const updatedUser = await userService.updateUser(id, req.body);
+      const updatedUser = await userService.updateUser(id, req.body, { partial: isPartial });
       return res.status(200).json(updatedUser);
     } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
+      return sendError(res, error);
     }
   }
 
@@ -54,7 +65,7 @@ class UserController {
       await userService.deleteUser(id);
       return res.status(200).json({ message: `Usuário ${id} excluído com sucesso.` });
     } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
+      return sendError(res, error);
     }
   }
 }
