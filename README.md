@@ -90,8 +90,8 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 
 1. **Clone o repositório:**
    ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd gestao-usuarios
+   git clone https://github.com/arthurkroning/projeto-bling.git
+   cd projeto-bling
    ```
 
 2. **Instale as dependências:**
