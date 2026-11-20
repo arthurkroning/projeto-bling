@@ -78,6 +78,7 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 * **Google Antigravity (Gemini 3.8 Flash):** Utilizado como apoio à concepção e à estruturação arquitetural em camadas, à validação dos fluxos e à elaboração da suíte de testes.
 * **OpenCode (DeepSeek V4.1 Flash Free):** Utilizado para executar testes automatizados, revisar o código e identificar oportunidades de refinamento.
 * **Codex (GPT-5):** Utilizado para revisão complementar, implementação de ajustes e verificação da consistência entre código, testes e documentação.
+* **Ambiente de desenvolvimento e validação visual:** Windows 10 Pro, com visualização da aplicação no Google Chrome versão 157.0.8103.79 (Compilação oficial, 64 bits).
 * **Git:** Controle de versionamento distribuído com histórico semântico de commits e arquivos de configuração limpos.
 
 ---
