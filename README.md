@@ -1,98 +1,143 @@
-# 🚀 Sistema de Gestão de Usuários (CRUD Full-Stack)
+# 🚀 Sistema de Gestão de Usuários (Full-Stack CRUD)
 
-> **Desafio Técnico Full-Stack** — Iniciativa DevPool  
-> Aplicação completa com API REST, persistência em banco de dados e interface web interativa.
+> Aplicação completa de **Gestão de Usuários** desenvolvida com arquitetura em camadas desacopladas, comunicação assíncrona via API REST, persistência em banco de dados relacional e interface web interativa e responsiva.
 
 ---
 
 ## 📋 Sumário
+
 1. [Sobre o Projeto](#-sobre-o-projeto)
-2. [Tecnologias Escolhidas e Justificativas](#-tecnologias-escolhidas-e-justificativas)
+2. [Tecnologias Utilizadas e Justificativas Técnicas](#-tecnologias-utilizadas-e-justificativas-técnicas)
+   - [Frontend](#1-frontend-interface-do-usuário)
+   - [Backend](#2-backend-servidor-e-api-rest)
+   - [Banco de Dados & Persistência](#3-banco-de-dados--persistência)
+   - [Segurança & Criptografia](#4-segurança--criptografia)
+   - [Ferramentas de Desenvolvimento & Engenharia](#5-ferramentas-de-desenvolvimento--engenharia)
 3. [Instalação e Execução Local](#-instalação-e-execução-local)
-4. [Documentação dos Endpoints da API (cURL)](#-documentação-dos-endpoints-da-api-curl)
-5. [Arquitetura e Estrutura de Pastas](#-arquitetura-e-estrutura-de-pastas)
-6. [Ciclo de Vida da Requisição (Para o Estudo de Caso Visual)](#-ciclo-de-vida-da-requisição-estudo-de-caso-visual)
-7. [Dicas para a Apresentação na Entrevista](#-dicas-para-a-apresentação-na-entrevista)
+   - [Pré-requisitos](#pré-requisitos)
+   - [Passo a Passo](#passo-a-passo)
+   - [Execução dos Testes Automatizados](#execução-dos-testes-automatizados)
+4. [Documentação dos Endpoints da API REST (Exemplos cURL)](#-documentação-dos-endpoints-da-api-rest-exemplos-curl)
+5. [Arquitetura de Software e Estrutura de Pastas](#-arquitetura-de-software-e-estrutura-de-pastas)
+6. [Ciclo de Vida da Requisição e Diretrizes de Segurança](#-ciclo-de-vida-da-requisição-e-diretrizes-de-segurança)
 
 ---
 
 ## 📌 Sobre o Projeto
 
-O sistema é uma aplicação web completa para gerenciamento (CRUD) de usuários corporativos, construída para demonstrar fundamentos sólidos de arquitetura de software, boas práticas de segurança, validação de regras de negócio e comunicação desacoplada via API REST.
+O sistema é uma solução web corporativa para gerenciamento completo do ciclo de vida de usuários (*Create, Read, Update, Delete*). O projeto foi desenhado sob princípios rigorosos de **Clean Architecture**, **Separação de Preocupações (Separation of Concerns - SoC)** e **Responsabilidade Única (SRP)**, garantindo que o frontend nunca acesse diretamente a camada de dados e que todas as regras de negócio sejam validadas e centralizadas no servidor.
 
-### Principais Funcionalidades:
-- **Listagem e Busca em Tempo Real:** Tabela dinâmica com estatísticas de usuários (total, ativos e inativos) e filtro de busca por nome, e-mail ou login.
-- **Cadastro e Edição:** Modal intuitivo com validações no frontend e no backend.
-- **Exclusão Segura:** Diálogo de confirmação antes de remover qualquer registro.
-- **Feedback Visual Imediato:** Loading spinners durante requisições e notificações *Toast* de sucesso ou erro amigável.
-- **Segurança de Dados:** Hash de senhas com algoritmo BCrypt e proteção total de dados sensíveis (a API **nunca** expõe senhas ou hashes em nenhum retorno JSON).
+### Principais Recursos:
+- **Painel de Usuários com Estatísticas:** Cards dinâmicos exibindo Total de Usuários, Ativos e Inativos com atualização em tempo real.
+- **Busca Instantânea (Filtragem Client-Side):** Campo de busca reativo que filtra por nome, e-mail ou login sem recarregar a página.
+- **Formulário Reutilizável (Criação e Edição):** Modal dinâmico que adapta regras e campos automaticamente para cadastros novos ou atualizações.
+- **Exclusão Segura com Diálogo de Confirmação:** Modal de confirmação explícita que previne remoções acidentais no banco de dados.
+- **Feedback Visual Imediato:** Estados de carregamento (*spinners* nos botões e na listagem), notificações flutuantes (*Toasts*) de sucesso e tratamento amigável de erros de validação.
+- **Proteção Total de Credenciais:** As senhas são armazenadas como hash criptográfico irreversível e a API **nunca** expõe senhas ou seus hashes em nenhum retorno JSON.
 
 ---
 
-## 🛠 Tecnologias Escolhidas e Justificativas
+## 🛠 Tecnologias Utilizadas e Justificativas Técnicas
 
-Conforme as opções estritas do desafio, foram selecionadas as tecnologias que garantem máxima clareza, facilidade de manutenção e zero atrito para execução pelo avaliador:
+Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto desempenho, facilidade de manutenção e máxima portabilidade (zero atrito para quem clona e executa o projeto):
 
-### 1. Frontend: HTML5 + CSS3 Moderno + Vanilla JavaScript
-* **Por que Vanilla JS?** Elimina a complexidade de compilação/build (como Webpack ou Vite) e abstrações de frameworks. Todo o fluxo de eventos e manipulação do DOM é direto e 100% transparente para quem está lendo ou apresentando o código.
-* **Consumo via REST:** Todo o frontend se comunica exclusivamente com a API através da Fetch API padrão dos navegadores, garantindo isolamento total da camada de persistência.
+### 1. Frontend (Interface do Usuário)
+* **HTML5 Semântico:** Marcação estruturada focada em acessibilidade (`<header>`, `<main>`, `<section>`, `<table>`, formulários com validações nativas e tags semânticas).
+* **CSS3 Moderno:**
+  * Uso de **CSS Custom Properties (Variáveis CSS)** para padronização de paleta de cores (tema moderno dark/slate), tipografia e espaçamentos.
+  * Layout flexível e adaptável utilizando **Flexbox** e **CSS Grid**.
+  * **Media Queries** garantindo responsividade em dispositivos móveis, tablets e telas widescreen.
+  * Animações suaves de transição para modais, spinners e notificações toast.
+* **JavaScript Puro (Vanilla JS - ES6+):**
+  * **Sem dependências de compilação:** Dispensou o overhead de builders pesados (Webpack/Vite) ou abstrações de frameworks, proporcionando carregamento instantâneo no navegador.
+  * **Manipulação Nativa do DOM:** Controle granular do ciclo de vida dos eventos (`addEventListener`, delegação de eventos e manipulação dinâmica de nós).
+  * **Comunicação Assíncrona com Fetch API:** Requisições assíncronas nativas utilizando `async/await`, com controle explícito de cabeçalhos HTTP (`Content-Type: application/json`).
+  * **Sanitização Anti-XSS:** Implementação de rotinas de escape de caracteres HTML (`escapeHtml` e `escapeQuotes`) para prevenir vulnerabilidades de *Cross-Site Scripting*.
+* **Phosphor Icons (via CDN):** Conjunto leve e consistente de ícones vetoriais em SVG para enriquecimento visual da interface.
 
-### 2. Backend: Node.js com Express
-* **Por que Node.js + Express?** É o ecossistema mais amplamente adotado no mercado web, oferecendo sintaxe limpa, excelente desempenho assíncrono e arquitetura modular simples de defender.
-* **CORS:** Habilitado para permitir requisições sem bloqueios do navegador.
+### 2. Backend (Servidor e API REST)
+* **Node.js (LTS v18+):** Ambiente de execução JavaScript assíncrono baseado no motor V8, orientado a eventos e I/O não bloqueante, ideal para APIs REST de alta concorrência.
+* **Express (v4.21):** Framework web minimalista e consagrado na indústria, utilizado para roteamento semântico, encadeamento de middlewares e tratamento padronizado de requisições e respostas HTTP.
+* **CORS (Cross-Origin Resource Sharing):** Middleware configurado para gerenciar políticas de cabeçalhos HTTP, permitindo que a aplicação frontend e consumidores autorizados consumam a API com segurança.
+* **Parser de JSON Nativo (`express.json()`):** Middleware para deserialização automática de corpos de requisição formatados em JSON com controle de tamanho de payload.
 
-### 3. Banco de Dados: SQLite
-* **Por que SQLite?** Não necessita de servidores externos nem configuração de containers Docker. O arquivo do banco é criado e gerenciado automaticamente na inicialização, permitindo que a banca rode o projeto com um simples comando `npm start`.
+### 3. Banco de Dados & Persistência
+* **SQLite (via biblioteca `sqlite3`):**
+  * **Persistência Relacional em Arquivo:** Sistema de gerenciamento de banco de dados relacional completo em conformidade com **ACID**, que persiste as informações em um arquivo local (`database.sqlite`).
+  * **Zero Setup Externo:** Elimina a necessidade de instalação e configuração de servidores externos ou containers Docker, permitindo que a aplicação execute imediatamente após a instalação.
+  * **Integridade de Dados:** Tabela estruturada com chaves primárias autoincrementadas (`id INTEGER PRIMARY KEY AUTOINCREMENT`) e constraints de unicidade (`UNIQUE`) para os campos `email` e `login`.
 
-### 4. Segurança e Criptografia: BCrypt (bcryptjs)
-* **Por que BCrypt?** Padrão da indústria com salt integrado para geração de hash irreversível de senhas contra ataques de dicionário e rainbow tables.
+### 4. Segurança & Criptografia
+* **BCrypt (`bcryptjs`):**
+  * Função de derivação de chave criptográfica baseada na cifra Blowfish, com geração de **salt aleatório** integrada e fator de custo ajustado para 10 rounds.
+  * Garante que as senhas dos usuários nunca sejam armazenadas em texto puro, tornando o sistema resistente a ataques de força bruta, dicionário e *rainbow tables*.
+* **Sanitização de Retorno (Data Sanitization):** Método centralizado na camada de serviço (`formatUser`) que desestrutura o objeto de usuário e descarta explicitamente o atributo de senha antes de serializar o JSON de resposta.
+
+### 5. Ferramentas de Desenvolvimento & Engenharia
+* **Google Antigravity:** A concepção, estruturação arquitetural em camadas, validação técnica dos fluxos e elaboração da suíte de testes foram aceleradas com o auxílio do **Google Antigravity** (ambiente agentic de desenvolvimento assistido por IA do Google DeepMind), assegurando rigor metodológico, cobertura integral dos requisitos do edital e código limpo.
+* **Git:** Controle de versionamento distribuído com histórico semântico de commits e arquivos de configuração limpos.
 
 ---
 
 ## 💻 Instalação e Execução Local
 
 ### Pré-requisitos
-* **Node.js** (versão 18 ou superior)
-* **npm** (já incluso no Node.js)
+* **Node.js** instalado na máquina (versão 18.0 ou superior recomendada).
+* Gerenciador de pacotes **npm** (incluso na instalação padrão do Node.js).
+* Navegador web moderno (Chrome, Edge, Firefox, Brave ou Safari).
 
 ### Passo a Passo
 
 1. **Clone o repositório:**
    ```bash
-   git clone <URL_DO_SEU_REPOSITORIO>
-   cd "Projeto Bling"
+   git clone <URL_DO_REPOSITORIO>
+   cd gestao-usuarios
    ```
 
 2. **Instale as dependências:**
    ```bash
    npm install
    ```
-   *(Ou entre na pasta `backend` e execute `npm install`)*
+   *Nota: O comando acima instala as dependências da raiz e aciona automaticamente a instalação das dependências do backend.*
 
 3. **Inicie o servidor:**
    ```bash
    npm start
    ```
 
-4. **Acesse a aplicação:**
-   * Abra no seu navegador: **[http://localhost:3000](http://localhost:3000)**
-   * A aplicação web será carregada imediatamente.
+4. **Acesse a aplicação no navegador:**
+   * Abra: **[http://localhost:3000](http://localhost:3000)**
+   * A interface web será exibida e a conexão com a API REST será confirmada automaticamente.
 
 ---
 
-## 📡 Documentação dos Endpoints da API (cURL)
+### Execução dos Testes Automatizados
 
-A URL base da API é `http://localhost:3000`.
+O projeto acompanha uma suíte de testes de integração ponta a ponta (`test_api.js`) que valida automaticamente os 13 requisitos e regras de negócio da API (validação de tamanho de campos, unicidade de e-mail e login, hash BCrypt, códigos de status HTTP 200, 201, 400 e 404):
+
+```bash
+npm run test:api
+```
+
+*(Ou diretamente: `node backend/test_api.js`)*
+
+---
+
+## 📡 Documentação dos Endpoints da API REST (Exemplos cURL)
+
+A URL base da API é: `http://localhost:3000`
 
 ### 1. Cadastrar Usuário (`POST /users`)
+Recebe o payload em JSON, valida regras de negócio, gera o hash seguro da senha e persiste o usuário com status padrão `active: true`.
+
 * **Status de Sucesso:** `201 Created`
-* **Exemplo cURL:**
+* **Chamada cURL:**
   ```bash
   curl -X POST http://localhost:3000/users \
     -H "Content-Type: application/json" \
     -d '{
       "name": "Maria Silva",
-      "email": "maria@empresa.com",
+      "email": "maria.silva@empresa.com",
       "login": "mariasilva",
       "password": "senhaSegura123",
       "active": true
@@ -103,31 +148,71 @@ A URL base da API é `http://localhost:3000`.
   {
     "id": 1,
     "name": "Maria Silva",
-    "email": "maria@empresa.com",
+    "email": "maria.silva@empresa.com",
     "login": "mariasilva",
     "active": true,
-    "created_at": "2026-11-17 19:30:00",
-    "updated_at": "2026-11-17 19:30:00"
+    "created_at": "2026-11-19 20:00:00",
+    "updated_at": "2026-11-19 20:00:00"
   }
   ```
 
+---
+
 ### 2. Listar Todos os Usuários (`GET /users`)
+Retorna a listagem de todos os usuários ordenados pelo ID mais recente.
+
 * **Status de Sucesso:** `200 OK`
-* **Exemplo cURL:**
+* **Chamada cURL:**
   ```bash
   curl -X GET http://localhost:3000/users
   ```
+* **Exemplo de Resposta (200 OK):**
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Maria Silva",
+      "email": "maria.silva@empresa.com",
+      "login": "mariasilva",
+      "active": true,
+      "created_at": "2026-11-19 20:00:00",
+      "updated_at": "2026-11-19 20:00:00"
+    }
+  ]
+  ```
 
-### 3. Obter Detalhes de um Usuário (`GET /users/{id}`)
-* **Status de Sucesso:** `200 OK` (ou `404 Not Found` se não existir)
-* **Exemplo cURL:**
+---
+
+### 3. Obter Detalhes por ID (`GET /users/{id}`)
+Retorna os dados de um usuário específico identificado pelo parâmetro de rota.
+
+* **Status de Sucesso:** `200 OK`
+* **Status se não encontrado:** `404 Not Found`
+* **Chamada cURL:**
   ```bash
   curl -X GET http://localhost:3000/users/1
   ```
+* **Exemplo de Resposta (200 OK):**
+  ```json
+  {
+    "id": 1,
+    "name": "Maria Silva",
+    "email": "maria.silva@empresa.com",
+    "login": "mariasilva",
+    "active": true,
+    "created_at": "2026-11-19 20:00:00",
+    "updated_at": "2026-11-19 20:00:00"
+  }
+  ```
 
-### 4. Atualizar Usuário (`PUT /users/{id}` ou `PATCH /users/{id}`)
+---
+
+### 4. Atualizar Dados do Usuário (`PUT /users/{id}` ou `PATCH /users/{id}`)
+Atualiza dados cadastrais. Se o campo `password` for enviado (mínimo de 8 caracteres), gera um novo hash; se omitido ou em branco, preserva o hash anterior.
+
 * **Status de Sucesso:** `200 OK`
-* **Exemplo cURL:**
+* **Status se não encontrado:** `404 Not Found`
+* **Chamada cURL:**
   ```bash
   curl -X PUT http://localhost:3000/users/1 \
     -H "Content-Type: application/json" \
@@ -139,15 +224,29 @@ A URL base da API é `http://localhost:3000`.
     }'
   ```
 
+---
+
 ### 5. Excluir Usuário (`DELETE /users/{id}`)
-* **Status de Sucesso:** `200 OK` (ou `204 No Content`)
-* **Exemplo cURL:**
+Remove o registro do banco de dados relacional.
+
+* **Status de Sucesso:** `200 OK`
+* **Status se não encontrado:** `404 Not Found`
+* **Chamada cURL:**
   ```bash
   curl -X DELETE http://localhost:3000/users/1
   ```
+* **Exemplo de Resposta (200 OK):**
+  ```json
+  {
+    "message": "Usuário 1 excluído com sucesso."
+  }
+  ```
 
-### 6. Exemplo de Resposta de Erro / Validação (`400 Bad Request`)
-Quando um campo obrigatório for omitido ou duplicado (ex: e-mail repetido):
+---
+
+### 6. Tratamento de Erros e Validações (`400 Bad Request`)
+Quando qualquer regra de negócio for violada (nome menor que 3 caracteres, e-mail com formato inválido, e-mail já existente, login duplicado ou senha menor que 8 caracteres):
+
 ```json
 {
   "error": "O e-mail informado já está cadastrado no sistema."
@@ -156,93 +255,81 @@ Quando um campo obrigatório for omitido ou duplicado (ex: e-mail repetido):
 
 ---
 
-## 🏛 Arquitetura e Estrutura de Pastas
+## 🏛 Arquitetura de Software e Estrutura de Pastas
 
-O backend segue o padrão em camadas (**Layered Architecture**), desacoplando responsabilidades de forma que cada arquivo possua uma única função bem definida:
+O backend implementa o padrão **Layered Architecture** com divisões estritas de escopo:
 
-```
+```text
 ├── backend/
 │   ├── src/
 │   │   ├── database/
-│   │   │   └── connection.js      # Conexão SQLite e criação automática da tabela
+│   │   │   └── connection.js      # Gerenciador da conexão SQLite e DDL da tabela
 │   │   ├── repositories/
-│   │   │   └── user.repository.js # Camada de Dados (SQL puro: SELECT, INSERT, UPDATE, DELETE)
+│   │   │   └── user.repository.js # Camada de Dados (SQL: SELECT, INSERT, UPDATE, DELETE)
 │   │   ├── services/
-│   │   │   └── user.service.js    # Regras de Negócio, validações (chars, regex, unicidade) e hash
+│   │   │   └── user.service.js    # Camada de Negócio (regras, validações e BCrypt)
 │   │   ├── controllers/
-│   │   │   └── user.controller.js # Camada de Apresentação HTTP (recebe req e envia res com status)
+│   │   │   └── user.controller.js # Camada de Apresentação HTTP (status codes e serialização)
 │   │   ├── routes/
-│   │   │   └── user.routes.js     # Mapeamento dos endpoints REST para os Controllers
-│   │   └── app.js                 # Configuração do Express, CORS e arquivos estáticos
-│   ├── server.js                  # Ponto de entrada que inicializa a porta HTTP (3000)
-│   ├── test_api.js                # Script de testes automatizados dos endpoints
-│   └── package.json
+│   │   │   └── user.routes.js     # Definição e roteamento dos endpoints REST
+│   │   └── app.js                 # Pipeline do Express, CORS e entrega de estáticos
+│   ├── server.js                  # Inicialização do servidor na porta designada
+│   ├── test_api.js                # Suíte de testes automatizados da API
+│   ├── package.json               # Dependências do backend
+│   └── package-lock.json
 │
 ├── frontend/
-│   ├── index.html                 # Estrutura semântica, acessível e responsiva
-│   ├── style.css                  # Folha de estilo moderna (paleta limpa, modais, cards, badges)
-│   └── app.js                     # Lógica de consumo da API REST via Fetch, estado e eventos DOM
+│   ├── index.html                 # Interface estrutural semântica e modais
+│   ├── style.css                  # Folha de estilo moderna, paleta de cores e animações
+│   └── app.js                     # Controlador do DOM, consumo de API e tratamento de eventos
 │
-├── package.json                   # Script raiz para inicialização unificada
-├── .gitignore
-└── README.md
+├── package.json                   # Script orquestrador raiz
+├── .gitignore                     # Filtros de exclusão de arquivos transitórios
+└── README.md                      # Documentação técnica oficial do repositório
 ```
 
 ---
 
-## 🔄 Ciclo de Vida da Requisição (Estudo de Caso Visual - Etapa 2)
+## 🔄 Ciclo de Vida da Requisição e Diretrizes de Segurança
 
-Para a **Etapa 2 da Entrevista Técnica (Estudo de Caso de Arquitetura Visual - 30 min)**, foram disponibilizados os seguintes artefatos prontos:
-- 📊 **Draw.io:** [fluxo_arquitetura_completo.drawio](file:///z:/Projeto%20Bling/fluxo_arquitetura_completo.drawio) (pode ser aberto diretamente no [app.diagrams.net](https://app.diagrams.net) ou na extensão Draw.io do VS Code).
-- 🎨 **Excalidraw:** [fluxo_arquitetura_completo.excalidraw](file:///z:/Projeto%20Bling/fluxo_arquitetura_completo.excalidraw) (pode ser arrastado diretamente para o [excalidraw.com](https://excalidraw.com) ou aberto na extensão Excalidraw).
-- 🎙️ **Roteiro Completo de Apresentação:** [ROTEIRO_APRESENTACAO_ETAPA_2_ARQUITETURA.md](file:///z:/Projeto%20Bling/ROTEIRO_APRESENTACAO_ETAPA_2_ARQUITETURA.md) (com guia minuto a minuto, scripts de fala e respostas para a banca).
-
-### Visão Resumida do Fluxo:
+O fluxo de dados da aplicação obedece a um pipeline unidirecional, desacoplado e seguro:
 
 ```
-[ Usuário no Navegador ]
-         │ (Preenche formulário e clica em Salvar)
-         ▼
-[ Frontend: app.js ]
-         │ 1. Validação básica de campos
-         │ 2. Dispara requisição HTTP com fetch() (ex: POST /users com JSON)
-         ▼
-[ Rede / HTTP ] ──► [ CORS Middleware ] ──► [ express.json() Parser ]
-                                                       │
-                                                       ▼
-                                            [ Rota: user.routes.js ]
-                                                       │
-                                                       ▼
-                                      [ Controller: user.controller.js ]
-                                                       │
-                                                       ▼
-                                       [ Service: user.service.js ]
-                                        • Valida nome (>= 3 chars)
-                                        • Valida regex do e-mail
-                                        • Checa duplicidade de login/e-mail
-                                        • Gera hash seguro da senha com BCrypt
-                                                       │
-                                                       ▼
-                                   [ Repository: user.repository.js ]
-                                        • Monta SQL parametrizado (INSERT INTO...)
-                                                       │
-                                                       ▼
-                                        [ Banco de Dados: SQLite ]
-                                                       │
-                                                       ▼
-         ◄── [ Resposta HTTP: Status 201 Created + JSON do Usuário (SEM SENHA) ] ──
+[ Navegador Web / Cliente ]
+           │
+           │  1. Dispara requisição HTTP assíncrona (ex: POST /users com JSON)
+           ▼
+[ Middlewares: CORS & express.json() ]
+           │  2. Valida política de origem e converte o payload em objeto JavaScript
+           ▼
+[ Roteador: user.routes.js ]
+           │  3. Encaminha para a ação correspondente no Controller
+           ▼
+[ Controller: user.controller.js ]
+           │  4. Extrai parâmetros/body e delega para a camada de Serviço
+           ▼
+[ Service: user.service.js ]
+           │  5. Executa regras de negócio:
+           │     • Validação de nome (mínimo 3 caracteres válidos)
+           │     • Validação de e-mail por regex e verificação de unicidade
+           │     • Validação de login (mínimo 3 caracteres e unicidade)
+           │     • Geração de hash seguro da senha com BCrypt (salt rounds: 10)
+           ▼
+[ Repository: user.repository.js ]
+           │  6. Executa SQL parametrizado contra injeção de SQL (Prepared Statements)
+           ▼
+[ Banco de Dados: SQLite ]
+           │  7. Grava o registro no disco e retorna o ID autoincrementado
+           ▼
+[ Higienização & Retorno Seguro ]
+           │  8. O Service aplica formatUser() (descarta senha/hash)
+           │  9. O Controller responde com status HTTP semântico (201 Created)
+           ▼
+[ Interface Frontend ]
+              10. Fecha o modal, atualiza a tabela e notifica o usuário via Toast
 ```
 
----
-
-## 🎯 Dicas para a Apresentação na Entrevista
-
-### Como explicar o projeto em 2 minutos (Roteiro Verbal):
-1. *"Optei por uma arquitetura em 3 camadas no backend: **Controller**, **Service** e **Repository**."*
-2. *"O **Controller** apenas recebe a requisição HTTP e define o código de status correto (200, 201, 400, 404)."*
-3. *"O **Service** é onde mora o coração das regras de negócio: valida tamanho de campos, unicidade de login/e-mail e gera o hash da senha via **BCrypt**."*
-4. *"O **Repository** é o único que fala SQL com o **SQLite**, mantendo a camada de dados 100% isolada."*
-5. *"No **Frontend**, utilizei **Vanilla JavaScript** consumindo a API com `fetch`. Não há acoplamento com o banco: toda comunicação respeita o protocolo REST."*
-
-### Como responder à pergunta: *"Por que exclusão física ou lógica?"*
-> *"No projeto deixei a exclusão física funcional com o comando `DELETE /users/:id`, mas adicionei a coluna booleana `active` que permite inativação lógica. Em sistemas empresariais reais, a exclusão lógica (soft delete) é preferível para manter a integridade referencial e histórico de auditoria."*
+### Síntese de Segurança:
+- **Proteção contra SQL Injection:** Todos os comandos no `user.repository.js` utilizam placeholders (`?`) garantindo consultas parametrizadas.
+- **Proteção contra XSS:** Sanitização em tempo de renderização no frontend de qualquer conteúdo injetado no DOM.
+- **Isolamento de Credenciais:** Queries SQL de consulta não recuperam a coluna de senha e a camada de serviço garante a remoção de campos sensíveis antes de qualquer retorno ao cliente.
