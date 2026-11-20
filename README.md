@@ -130,6 +130,40 @@ npm run test:api
 
 A URL base da API é: `http://localhost:3000`
 
+### Testando no PowerShell (Windows)
+
+Inicie a aplicação com `npm start` e mantenha esse terminal aberto. Em uma segunda janela do PowerShell, utilize `curl.exe` (em vez de `curl`, que pode ser um alias do PowerShell):
+
+```powershell
+# Verifica se a API está disponível
+curl.exe "http://localhost:3000/health"
+
+# Lista os usuários cadastrados
+curl.exe -X GET "http://localhost:3000/users"
+```
+
+Para enviar JSON, atribua o conteúdo a uma variável e envie-o pelo pipeline. Isso evita que o PowerShell altere as aspas do JSON:
+
+```powershell
+# Cria um usuário
+$body = '{"name":"Maria Silva","email":"maria.silva@empresa.com","login":"mariasilva","password":"senhaSegura123","active":true}'
+
+$body | curl.exe -X POST "http://localhost:3000/users" `
+  -H "Content-Type: application/json" `
+  --data-binary "@-"
+```
+
+```powershell
+# Atualiza somente o status do usuário 1
+$body = '{"active":false}'
+
+$body | curl.exe -X PATCH "http://localhost:3000/users/1" `
+  -H "Content-Type: application/json" `
+  --data-binary "@-"
+```
+
+Use sempre `http://localhost:3000` na URL, sem barras invertidas. Nos exemplos abaixo, `\` é a continuação de linha usada por Bash, Git Bash ou WSL; no PowerShell, use o acento grave (backtick) ou execute o comando em uma única linha.
+
 ### 1. Cadastrar Usuário (`POST /users`)
 Recebe o payload em JSON, valida regras de negócio, gera o hash seguro da senha e persiste o usuário com status padrão `active: true`.
 
