@@ -113,7 +113,7 @@ Todas as escolhas tecnológicas foram orientadas para garantir robustez, alto de
 
 ### Execução dos Testes Automatizados
 
-O projeto acompanha uma suíte de testes de integração ponta a ponta (`test_api.js`) que valida automaticamente os 13 requisitos e regras de negócio da API (validação de tamanho de campos, unicidade de e-mail e login, hash BCrypt, códigos de status HTTP 200, 201, 400 e 404):
+O projeto acompanha uma suíte de **22 testes de integração** ponta a ponta (`test_api.js`) que utiliza `assert` do Node.js para validar automaticamente as regras de negócio da API — validação de campos (nome, e-mail, login, senha), unicidade de e-mail e login, `active` padrão e booleano estrito, ocultação de senha no retorno, códigos de status HTTP (200, 201, 400, 404), tratamento de JSON malformado, CORS e rotas inexistentes. O processo termina com **exit code 1** caso algum teste falhe:
 
 ```bash
 npm run test:api
